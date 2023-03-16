@@ -138,9 +138,13 @@
       const CAT2 = "https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/inflearn";
       const CAT3 = "https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript";
 
-      const [counter, setCounter] = React.useState(jsonLocalStorage.getItem('counter'));
+      const [counter, setCounter] = React.useState(() => {
+        return jsonLocalStorage.getItem('counter');
+      });
       const [mainCatImage, setMainCatImage] = React.useState(CAT1);
-      const [favorites, setFavorites] = React.useState(jsonLocalStorage.getItem("favorites") || []);
+      const [favorites, setFavorites] = React.useState(() => {
+        return jsonLocalStorage.getItem("favorites") || []
+      });
 
       const alreadyFavorite = favorites.includes(mainCatImage)
 
@@ -154,11 +158,14 @@
       }, [])
 
       async function updateMainCat(value) {
-        const nextCounter = counter + 1;
         const newCat = await fetchCat(value);
 
-        setCounter(nextCounter);
-        jsonLocalStorage.setItem('counter', nextCounter);
+        setCounter((prev) => { //prev는 setCounter 하기 전 counter의 값을 가져온다
+          const nextCounter = prev + 1;
+          jsonLocalStorage.setItem('counter', nextCounter);
+          return nextCounter;
+        });
+
         setMainCatImage(newCat);
       }
 
